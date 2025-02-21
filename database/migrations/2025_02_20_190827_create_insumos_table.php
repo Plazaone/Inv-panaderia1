@@ -11,12 +11,12 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('_empresa', function (Blueprint $table) {
-            $table->id();            
-            $table->string('nombre');
-            $table->integer('telefono');
-            $table->string('correo');
-            $table->string('direccion');
+        Schema::create('insumo', function (Blueprint $table) {
+            $table->id();
+            $table->string('NombreInsumo',100);
+            $table->double('UnidadMedida');
+            $table->double('Precio');
+            $table->timestamps();
         });
     }
 
@@ -25,6 +25,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('_empresa');
+        Schema::dropIfExists('insumo');
     }
 };
