@@ -15,3 +15,9 @@ Route::post('/empresa',[EmpresaController::class, 'store']);
 
 Route::delete('/empresa/{id}', [EmpresaController::class, 'destroy']);
 
+Route::put('/empresa/{id}', [EmpresaController::class, 'update']);
+
+Route::patch('/empresa/{id}', [EmpresaController::class, 'updatePartial']);
+
+
+

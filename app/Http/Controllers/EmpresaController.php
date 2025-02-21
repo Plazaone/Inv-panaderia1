@@ -77,7 +77,7 @@ class EmpresaController extends Controller
         $empresa = Empresa::find($id);
         if (!$empresa) {
             $data = [
-                "messege" => "Estudiante no encontrado",
+                "messege" => "Empresa no encontrada",
                 "status" => 404
             ];
             return response()->json($data, 404);
@@ -87,7 +87,7 @@ class EmpresaController extends Controller
             "empresa" => $empresa,
             "status" => 200
         ];
-        return response()->json($data,200);
+        return response()->json($data, 200);
     }
 
     /**
@@ -101,9 +101,44 @@ class EmpresaController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function update(Request $request, $id)
     {
-        //
+        $empresa = Empresa::find($id);
+        if (!$empresa) {
+            $data = [
+                "messege" => "Empresa no encontrada",
+                "status" => 404
+            ];
+            return response()->json($data, 404);
+        }
+        $validator = Validator::make($request->all(), [
+            "Nombre" => "required",
+            "Telefono" => "required",
+            "email" => "required|email|unique:empresa",
+            "direccion" => "required"
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                "message" => "Error en la validación de los datos",
+                "errors" => $validator->errors(),
+                "status" => 400
+            ], 400);
+        }
+
+        $empresa->Nombre = $request->Nombre;
+        $empresa->Telefono = $request->Telefono;
+        $empresa->email = $request->email;
+        $empresa->direccion = $request->direccion;
+
+        $empresa->save();
+
+        $data = [
+            "empresa" => $empresa,
+            "status" => 200
+        ];
+
+        return response()->json($data, 200);
     }
 
     /**
@@ -114,7 +149,7 @@ class EmpresaController extends Controller
         $empresa = Empresa::find($id);
         if (!$empresa) {
             $data = [
-                "messege" => "Estudiante no encontrado",
+                "messege" => "Empresa no encontrada",
                 "status" => 404
             ];
             return response()->json($data, 404);
@@ -123,9 +158,58 @@ class EmpresaController extends Controller
         $empresa->delete();
 
         $data = [
-            "Messege" => "Estudiante eliminado",
+            "Messege" => "Empresa Eliminada",
             "status" => 200
         ];
-        return response()->json($data,200);
+        return response()->json($data, 200);
+    }
+
+    public function updatePartial(Request $request, $id)
+    {
+        $empresa = Empresa::find($id);
+
+        if (!$empresa) {
+            $data = [
+                "messege" => "Empresa no encontrada",
+                "status" => 404
+            ];
+            return response()->json($data, 404);
+        }
+
+        $validator = Validator::make($request->all(), [
+            "Nombre" => "max:255",
+            "Telefono" => "digits:12",
+            "email" => "required|email|unique:empresa",
+            "direccion" => "max:255"
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                "message" => "Error en la validación de los datos",
+                "errors" => $validator->errors(),
+                "status" => 400
+            ], 400);
+        }
+
+        if ($request->has('Nombre')) {
+            $empresa->Nombre = $request->Nombre;
+        }
+        if ($request->has('Telefono')) {
+            $empresa->Telefono = $request->Telefono;
+        }
+        if ($request->has('email')) {
+            $empresa->email = $request->email;
+        }
+        if ($request->has('direccion')) {
+            $empresa->direccion = $request->direccion;
+        }
+
+        $empresa->save();
+        $data = [
+            "Messege" => "Empresa Actualizada",
+            "empresa" => $empresa,
+            "status" => 200
+        ];
+        return response()->json($data, 200);
     }
 }
