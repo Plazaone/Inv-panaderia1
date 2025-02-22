@@ -178,8 +178,8 @@ class EmpresaController extends Controller
 
         $validator = Validator::make($request->all(), [
             "Nombre" => "max:255",
-            "Telefono" => "digits:12",
-            "email" => "required|email|unique:empresa",
+            "Telefono" => "max:12",
+            "email" => "",
             "direccion" => "max:255"
         ]);
 

@@ -8,6 +8,14 @@ use Illuminate\Database\Eloquent\Model;
 class Sucursal extends Model
 {
     use HasFactory;
+    
+    protected $table = 'sucursal';
+    
+    protected $fillable = [
+        'NombreSucursal',
+        'DireccionSucursal',
+        'empresa_id'
+    ];
     protected $guarded = [];
 
     public function UsuarioSucursal()
