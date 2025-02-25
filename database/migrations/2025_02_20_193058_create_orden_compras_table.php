@@ -17,8 +17,8 @@ return new class extends Migration
             $table->foreignId('insumo_id')->constrained('insumo')->onUpdate('cascade')->onDelete('cascade');
             $table->date('fechaOrdenCompra');
             $table->integer('cantidad');
-            $table->double('PrecioUnidad');
-            $table->double('TotalCompra');
+            $table->double('PrecioUnidad',10,4);
+            $table->double('TotalCompra',10,3);
             $table->timestamps();
         });
     }

@@ -14,8 +14,8 @@ return new class extends Migration
         Schema::create('insumo', function (Blueprint $table) {
             $table->id();
             $table->string('NombreInsumo',100);
-            $table->double('UnidadMedida');
-            $table->double('Precio');
+            $table->double('UnidadMedida',8,2);
+            $table->double('Precio',10,4);
             $table->timestamps();
         });
     }

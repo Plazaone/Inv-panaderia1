@@ -11,6 +11,16 @@ class Producto extends Model
     use HasFactory;
     protected $guarded = [];
 
+    protected $table = 'producto';
+
+    protected $fillable = [
+        'users_id',
+        'NombreProducto',
+        'Descripcion',
+        'UnidadMedida',
+        'PrecioUnidad'
+    ];
+
     public function User()
     {
         return $this->belongsTo(User::class);

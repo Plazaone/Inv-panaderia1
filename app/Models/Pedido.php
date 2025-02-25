@@ -11,6 +11,13 @@ class Pedido extends Model
     use HasFactory;
     protected $guarded = [];
 
+    protected $table = 'pedido';
+
+    protected $fillable = [
+        'users_id',
+        'Cantidad'
+    ];
+
     public function User()
     {
         return $this->belongsTo(User::class);

@@ -16,8 +16,8 @@ return new class extends Migration
             $table->foreignId('users_id')->constrained('users')->onUpdate('cascade')->onDelete('cascade');
             $table->string('NombreProducto',80);
             $table->string('Descripcion',100)->nullable();
-            $table->double('UnidadMedida');
-            $table->double('PrecioUnidad');
+            $table->double('UnidadMedida',8,2);
+            $table->double('PrecioUnidad',10,4);
             $table->timestamps();
         });
     }
