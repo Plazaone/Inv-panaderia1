@@ -9,9 +9,17 @@ use Illuminate\Database\Eloquent\Model;
 class DetallePedido extends Model
 {
     use HasFactory;
-    protected $guarded = [];
 
-    public function Pedido()
+    protected $table = 'detalle_pedidos';
+    
+    protected $fillable = [
+        'pedido_id',
+        'producto_id',
+        'FechaPedido',
+        'TotalPedido'
+    ];
+
+    public function pedido()
     {
         return $this->belongsTo(Pedido::class);
     }
@@ -20,4 +28,5 @@ class DetallePedido extends Model
     {
         return $this->belongsTo(Producto::class);
     }
+    
 }

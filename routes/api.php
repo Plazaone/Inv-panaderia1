@@ -55,17 +55,15 @@ Route::patch('/user/{id}', [UserController::class, 'updatePartial']);
 
 /*Rutas api rest para crud de Pedido*/
 
-Route::get('/pedido',[PedidoController::class, 'index']);
+Route::get('/pedido', [PedidoController::class, 'index']);
 
-Route::get('/pedido/{id}',[PedidoController::class, 'show']);
+Route::get('/pedido/{id}', [PedidoController::class, 'show']);
 
-Route::post('/pedido',[PedidoController::class, 'store']);
+Route::post('/pedido', [PedidoController::class, 'store']);
 
-Route::put('/pedido/{id}',[PedidoController::class, 'update']);
+Route::put('/pedido/{id}', [PedidoController::class, 'update']);
 
 Route::delete('/pedido/{id}', [PedidoController::class, 'destroy']);
-
-Route::patch('/pedido/{id}', [PedidoController::class, 'updatePartial']);
 
 /*Rutas api rest para crud de la tabla Producto*/
 

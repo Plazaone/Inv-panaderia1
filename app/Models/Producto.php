@@ -11,7 +11,7 @@ class Producto extends Model
     use HasFactory;
     protected $guarded = [];
 
-    protected $table = 'producto';
+    protected $table = 'productos';
 
     protected $fillable = [
         'users_id',
@@ -34,4 +34,5 @@ class Producto extends Model
     {
         return $this->hasMany(Inventario::class);
     }
+
 }

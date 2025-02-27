@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('fabricacion', function (Blueprint $table) {
             $table->id();
             $table->foreignId('insumo_id')->constrained('insumo')->onUpdate('cascade')->onDelete('cascade');
-            $table->foreignId('producto_id')->constrained('producto')->onUpdate('cascade')->onDelete('cascade');
+            $table->foreignId('producto_id')->constrained('productos')->onUpdate('cascade')->onDelete('cascade');
             $table->integer('CantidadProducto');
             $table->time('TiempoFabricacion');
             $table->timestamps();
