@@ -2,23 +2,21 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Empresa;
-use Illuminate\Http\Request;
+use App\Models\Producto;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Http\Request;
 
-use function Illuminate\Log\log;
-
-class EmpresaController extends Controller
+class ProductoController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
     public function index()
     {
-        $empresa = Empresa::all();
+        $producto = Producto::all();
 
         $data = [
-            "empresa" => $empresa,
+            "producto" => $producto,
             "status" => 200
         ];
         return response()->json($data, 200);
@@ -37,12 +35,12 @@ class EmpresaController extends Controller
      */
     public function store(Request $request)
     {
-
         $validator = Validator::make($request->all(), [
-            "Nombre" => "required",
-            "Telefono" => "required",
-            "email" => "required|email|unique:empresa",
-            "direccion" => "required"
+            "users_id" => "required",
+            "NombreProducto" => "required",
+            "Descripcion" => "required",
+            "UnidadMedida" => "required",
+            "PrecioUnidad" => "required"
         ]);
 
         if ($validator->fails()) {
@@ -53,38 +51,37 @@ class EmpresaController extends Controller
             ], 400);
         }
 
-        $empresa = Empresa::create($request->only(["Nombre", "Telefono", "email", "direccion"]));
+        $producto = Producto::create($request->only(["users_id", "NombreProducto", "Descripcion", "UnidadMedida", "PrecioUnidad"]));
 
-        if (!$empresa) {
+        if (!$producto) {
             return response()->json([
-                "message" => "Error al ingresar la empresa",
+                "message" => "Error al ingresar el Producto",
                 "status" => 500
             ], 500);
         }
 
         return response()->json([
-            "empresa" => $empresa,
+            "Producto" => $producto,
             "status" => 201
         ], 201);
     }
-
 
     /**
      * Display the specified resource.
      */
     public function show($id)
     {
-        $empresa = Empresa::find($id);
-        if (!$empresa) {
+        $producto = Producto::find($id);
+        if (!$producto) {
             $data = [
-                "messege" => "Empresa no encontrada",
+                "messege" => "Producto no encontrado",
                 "status" => 404
             ];
             return response()->json($data, 404);
         }
 
         $data = [
-            "empresa" => $empresa,
+            "Producto" => $producto,
             "status" => 200
         ];
         return response()->json($data, 200);
@@ -103,19 +100,20 @@ class EmpresaController extends Controller
      */
     public function update(Request $request, $id)
     {
-        $empresa = Empresa::find($id);
-        if (!$empresa) {
+        $producto = Producto::find($id);
+        if (!$producto) {
             $data = [
-                "messege" => "Empresa no encontrada",
+                "messege" => "Producto no encontrado",
                 "status" => 404
             ];
             return response()->json($data, 404);
         }
         $validator = Validator::make($request->all(), [
-            "Nombre" => "required",
-            "Telefono" => "required",
-            "email" => "required|email|unique:empresa",
-            "direccion" => "required"
+            "users_id" => "required",
+            "NombreProducto" => "required",
+            "Descripcion" => "required",
+            "UnidadMedida" => "required",
+            "PrecioUnidad" => "required"
         ]);
 
         if ($validator->fails()) {
@@ -126,15 +124,16 @@ class EmpresaController extends Controller
             ], 400);
         }
 
-        $empresa->Nombre = $request->Nombre;
-        $empresa->Telefono = $request->Telefono;
-        $empresa->email = $request->email;
-        $empresa->direccion = $request->direccion;
+        $producto->users_id = $request->users_id;
+        $producto->NombreProducto = $request->NombreProducto;
+        $producto->Descripcion = $request->Descripcion;
+        $producto->UnidadMedida = $request->UnidadMedida;
+        $producto->PrecioUnidad = $request->PrecioUnidad;
 
-        $empresa->save();
+        $producto->save();
 
         $data = [
-            "empresa" => $empresa,
+            "Producto" => $producto,
             "status" => 200
         ];
 
@@ -146,19 +145,19 @@ class EmpresaController extends Controller
      */
     public function destroy($id)
     {
-        $empresa = Empresa::find($id);
-        if (!$empresa) {
+        $producto = Producto::find($id);
+        if (!$producto) {
             $data = [
-                "messege" => "Empresa no encontrada",
+                "messege" => "Producto no encontrado",
                 "status" => 404
             ];
             return response()->json($data, 404);
         }
 
-        $empresa->delete();
+        $producto->delete();
 
         $data = [
-            "Messege" => "Empresa Eliminada",
+            "messege" => "Producto eliminado",
             "status" => 200
         ];
         return response()->json($data, 200);
@@ -166,21 +165,22 @@ class EmpresaController extends Controller
 
     public function updatePartial(Request $request, $id)
     {
-        $empresa = Empresa::find($id);
+        $producto = Producto::find($id);
 
-        if (!$empresa) {
+        if (!$producto) {
             $data = [
-                "messege" => "Empresa no encontrada",
+                "messege" => "Producto no Encontrado",
                 "status" => 404
             ];
             return response()->json($data, 404);
         }
 
         $validator = Validator::make($request->all(), [
-            "Nombre" => "max:255",
-            "Telefono" => "max:12",
-            "email" => "",
-            "direccion" => "max:255"
+            "users_id" => "max:20",
+            "NombreProducto" => "max:80",
+            "Descripcion" => "max:100",
+            "UnidadMedida" => "max:11",
+            "PrecioUnidad" => "max:12"
         ]);
 
         if ($validator->fails()) {
@@ -191,23 +191,26 @@ class EmpresaController extends Controller
             ], 400);
         }
 
-        if ($request->has('Nombre')) {
-            $empresa->Nombre = $request->Nombre;
+        if ($request->has('users_id')) {
+            $producto->users_id = $request->users_id;
         }
-        if ($request->has('Telefono')) {
-            $empresa->Telefono = $request->Telefono;
+        if ($request->has('NombreProducto')) {
+            $producto->NombreProducto = $request->NombreProducto;
         }
-        if ($request->has('email')) {
-            $empresa->email = $request->email;
+        if ($request->has('Descripcion')) {
+            $producto->Descripcion = $request->Descripcion;
         }
-        if ($request->has('direccion')) {
-            $empresa->direccion = $request->direccion;
+        if ($request->has('UnidadMedida')) {
+            $producto->UnidadMedida = $request->UnidadMedida;
+        }
+        if ($request->has('PrecioUnidad')) {
+            $producto->PrecioUnidad = $request->PrecioUnidad;
         }
 
-        $empresa->save();
+        $producto->save();
         $data = [
-            "Messege" => "Empresa Actualizada",
-            "empresa" => $empresa,
+            "Messege" => "Producto Actualizado",
+            "pedido" => $producto,
             "status" => 200
         ];
         return response()->json($data, 200);

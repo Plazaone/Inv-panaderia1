@@ -2,34 +2,25 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Empresa;
-use Illuminate\Http\Request;
+use App\Models\Sucursal;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Http\Request;
 
-use function Illuminate\Log\log;
 
-class EmpresaController extends Controller
+class SucursalController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
     public function index()
     {
-        $empresa = Empresa::all();
+        $sucursal = Sucursal::all();
 
         $data = [
-            "empresa" => $empresa,
+            "sucursal" => $sucursal,
             "status" => 200
         ];
         return response()->json($data, 200);
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
     }
 
     /**
@@ -37,12 +28,10 @@ class EmpresaController extends Controller
      */
     public function store(Request $request)
     {
-
         $validator = Validator::make($request->all(), [
-            "Nombre" => "required",
-            "Telefono" => "required",
-            "email" => "required|email|unique:empresa",
-            "direccion" => "required"
+            "NombreSucursal" => "required",
+            "DireccionSucursal" => "required",
+            "empresa_id" => "required"
         ]);
 
         if ($validator->fails()) {
@@ -53,49 +42,40 @@ class EmpresaController extends Controller
             ], 400);
         }
 
-        $empresa = Empresa::create($request->only(["Nombre", "Telefono", "email", "direccion"]));
+        $sucursal = Sucursal::create($request->only(["NombreSucursal", "DireccionSucursal", "empresa_id"]));
 
-        if (!$empresa) {
+        if (!$sucursal) {
             return response()->json([
-                "message" => "Error al ingresar la empresa",
+                "message" => "Error al ingresar la sucursal",
                 "status" => 500
             ], 500);
         }
 
         return response()->json([
-            "empresa" => $empresa,
+            "sucursal" => $sucursal,
             "status" => 201
         ], 201);
     }
-
 
     /**
      * Display the specified resource.
      */
     public function show($id)
     {
-        $empresa = Empresa::find($id);
-        if (!$empresa) {
+        $sucursal = Sucursal::find($id);
+        if (!$sucursal) {
             $data = [
-                "messege" => "Empresa no encontrada",
+                "messege" => "Sucursal no Encontrada",
                 "status" => 404
             ];
             return response()->json($data, 404);
         }
 
         $data = [
-            "empresa" => $empresa,
+            "sucursal" => $sucursal,
             "status" => 200
         ];
         return response()->json($data, 200);
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(string $id)
-    {
-        //
     }
 
     /**
@@ -103,19 +83,17 @@ class EmpresaController extends Controller
      */
     public function update(Request $request, $id)
     {
-        $empresa = Empresa::find($id);
-        if (!$empresa) {
+        $sucursal = Sucursal::find($id);
+        if (!$sucursal) {
             $data = [
-                "messege" => "Empresa no encontrada",
+                "messege" => "Sucursal no encontrada",
                 "status" => 404
             ];
             return response()->json($data, 404);
         }
         $validator = Validator::make($request->all(), [
-            "Nombre" => "required",
-            "Telefono" => "required",
-            "email" => "required|email|unique:empresa",
-            "direccion" => "required"
+            "NombreSucursal" => "required",
+            "DireccionSucursal" => "required"
         ]);
 
         if ($validator->fails()) {
@@ -126,15 +104,13 @@ class EmpresaController extends Controller
             ], 400);
         }
 
-        $empresa->Nombre = $request->Nombre;
-        $empresa->Telefono = $request->Telefono;
-        $empresa->email = $request->email;
-        $empresa->direccion = $request->direccion;
+        $sucursal->NombreSucursal = $request->NombreSucursal;
+        $sucursal->DireccionSucursal = $request->DireccionSucursal;
 
-        $empresa->save();
+        $sucursal->save();
 
         $data = [
-            "empresa" => $empresa,
+            "sucursal" => $sucursal,
             "status" => 200
         ];
 
@@ -146,19 +122,19 @@ class EmpresaController extends Controller
      */
     public function destroy($id)
     {
-        $empresa = Empresa::find($id);
-        if (!$empresa) {
+        $sucursal = Sucursal::find($id);
+        if (!$sucursal) {
             $data = [
-                "messege" => "Empresa no encontrada",
+                "messege" => "Sucursal no encontrada",
                 "status" => 404
             ];
             return response()->json($data, 404);
         }
 
-        $empresa->delete();
+        $sucursal->delete();
 
         $data = [
-            "Messege" => "Empresa Eliminada",
+            "messege" => "sucursal eliminada",
             "status" => 200
         ];
         return response()->json($data, 200);
@@ -166,21 +142,19 @@ class EmpresaController extends Controller
 
     public function updatePartial(Request $request, $id)
     {
-        $empresa = Empresa::find($id);
+        $sucursal = Sucursal::find($id);
 
-        if (!$empresa) {
+        if (!$sucursal) {
             $data = [
-                "messege" => "Empresa no encontrada",
+                "messege" => "Sucursal no encontrada",
                 "status" => 404
             ];
             return response()->json($data, 404);
         }
 
         $validator = Validator::make($request->all(), [
-            "Nombre" => "max:255",
-            "Telefono" => "max:12",
-            "email" => "",
-            "direccion" => "max:255"
+            "NombreSucursal" => "max:100",
+            "DireccionSucursal" => "max:200"
         ]);
 
         if ($validator->fails()) {
@@ -191,23 +165,17 @@ class EmpresaController extends Controller
             ], 400);
         }
 
-        if ($request->has('Nombre')) {
-            $empresa->Nombre = $request->Nombre;
+        if ($request->has('NombreSucursal')) {
+            $sucursal->NombreSucursal = $request->NombreSucursal;
         }
-        if ($request->has('Telefono')) {
-            $empresa->Telefono = $request->Telefono;
-        }
-        if ($request->has('email')) {
-            $empresa->email = $request->email;
-        }
-        if ($request->has('direccion')) {
-            $empresa->direccion = $request->direccion;
+        if ($request->has('DireccionSucursal')) {
+            $sucursal->DireccionSucursal = $request->DireccionSucursal;
         }
 
-        $empresa->save();
+        $sucursal->save();
         $data = [
-            "Messege" => "Empresa Actualizada",
-            "empresa" => $empresa,
+            "Messege" => "Sucursal Actualizada",
+            "empresa" => $sucursal,
             "status" => 200
         ];
         return response()->json($data, 200);
