@@ -175,7 +175,7 @@ class UserController extends Controller
         $user->delete();
 
         $data = [
-            "Messege" => "Usuario Eliminada",
+            "Messege" => "Usuario Eliminado",
             "status" => 200
         ];
         return response()->json($data, 200);
@@ -232,7 +232,7 @@ class UserController extends Controller
             $user->Telefono = $request->Telefono;
         }
         if ($request->has('Direccion')) {
-            $user->Direcion = $request->Direccion;
+            $user->Direccion = $request->Direccion;
         }
         if ($request->has('Rol')){
             $user->Rol = $request->Rol;

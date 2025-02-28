@@ -40,7 +40,8 @@ class ProductoController extends Controller
             "NombreProducto" => "required",
             "Descripcion" => "required",
             "UnidadMedida" => "required",
-            "PrecioUnidad" => "required"
+            "PrecioUnidad" => "required",
+            "Cantidad" => "required"
         ]);
 
         if ($validator->fails()) {
@@ -51,7 +52,7 @@ class ProductoController extends Controller
             ], 400);
         }
 
-        $producto = Producto::create($request->only(["users_id", "NombreProducto", "Descripcion", "UnidadMedida", "PrecioUnidad"]));
+        $producto = Producto::create($request->only(["users_id", "NombreProducto", "Descripcion", "UnidadMedida", "PrecioUnidad", "Cantidad"]));
 
         if (!$producto) {
             return response()->json([
@@ -129,6 +130,7 @@ class ProductoController extends Controller
         $producto->Descripcion = $request->Descripcion;
         $producto->UnidadMedida = $request->UnidadMedida;
         $producto->PrecioUnidad = $request->PrecioUnidad;
+        $producto->Cantidad = $request->Cantidad;
 
         $producto->save();
 
@@ -205,6 +207,9 @@ class ProductoController extends Controller
         }
         if ($request->has('PrecioUnidad')) {
             $producto->PrecioUnidad = $request->PrecioUnidad;
+        }
+        if ($request->has('Cantidad')) {
+            $producto->Cantidad = $producto->Cantidad;
         }
 
         $producto->save();

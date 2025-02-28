@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\EmpresaController;
+use App\Http\Controllers\InventarioController;
 use App\Http\Controllers\PedidoController;
 use App\Http\Controllers\ProductoController;
 use App\Http\Controllers\SucursalController;
@@ -78,6 +79,11 @@ Route::put('/producto/{id}', [ProductoController::class, 'update']);
 Route::delete('/producto/{id}',[ProductoController::class, 'destroy']);
 
 Route::patch('/producto/{id}', [ProductoController::class, 'updatePartial']);
+
+/*Rutas api rest para crud de la tabla inventario */
+Route::get('/inventario', [InventarioController::class, 'index']);
+
+Route::post('/inventario', [InventarioController::class, 'store']);
 
 
 

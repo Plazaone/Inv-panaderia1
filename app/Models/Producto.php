@@ -18,7 +18,8 @@ class Producto extends Model
         'NombreProducto',
         'Descripcion',
         'UnidadMedida',
-        'PrecioUnidad'
+        'PrecioUnidad',
+        'Cantidad'
     ];
 
     public function User()
