@@ -15,6 +15,8 @@ return new class extends Migration
             $table->id();
             $table->foreignId('users_id')->constrained('users')->onUpdate('cascade')->onDelete('cascade');
             $table->foreignId('producto_id')->constrained('productos')->onUpdate('cascade')->onDelete('cascade');
+            $table->integer('Cantidad');
+            $table->integer('Stock');
             $table->integer('CantidadMax')->nullable();
             $table->integer('CantidadMin')->nullable();
             $table->timestamps();

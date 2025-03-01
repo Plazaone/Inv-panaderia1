@@ -17,7 +17,9 @@ class Inventario extends Model
     protected $fillable = [
         'users_id',
         'producto_id',
+        'Cantidad',
         'CantidadMax',
+        'Stock',
         'CantidadMin'
     ];
 

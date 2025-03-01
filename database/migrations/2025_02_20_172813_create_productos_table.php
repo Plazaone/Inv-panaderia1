@@ -18,7 +18,6 @@ return new class extends Migration
             $table->string('Descripcion',100)->nullable();
             $table->double('UnidadMedida',8,2);
             $table->double('PrecioUnidad',10,4);
-            $table->integer('Cantidad');
             $table->timestamps();
         });
     }
