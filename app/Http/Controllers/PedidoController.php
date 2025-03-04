@@ -9,6 +9,7 @@ use App\Models\Producto;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
 class PedidoController extends Controller
 {
@@ -28,10 +29,8 @@ class PedidoController extends Controller
     /**
      * Registrar un nuevo pedido y su detalle.
      */
-
     public function store(Request $request)
     {
-
         $validator = Validator::make($request->all(), [
             "producto_id" => "required|integer|exists:productos,id",
             "users_id" => "required|integer|exists:users,id",
@@ -46,56 +45,62 @@ class PedidoController extends Controller
             ], 400);
         }
 
-
         DB::beginTransaction();
 
         try {
-
-
             $producto = Producto::find($request->producto_id);
             $cantidadSolicitada = $request->Cantidad;
-            $inventario = Inventario::where('producto_id', $producto->id)->first();
 
-            if (!$inventario || $inventario->Stock < $cantidadSolicitada) {
+            // Bloquear el registro del inventario para evitar condiciones de carrera
+            $inventario = Inventario::where('producto_id', $producto->id)->lockForUpdate()->first();
+
+            if (!$inventario) {
+                return response()->json([
+                    "Message" => "Producto no encontrado en el inventario",
+                    "status" => 404
+                ], 404);
+            }
+
+            if ($inventario->Stock < $cantidadSolicitada) {
                 return response()->json([
                     "Message" => "Stock insuficiente",
-                    "Stock_disponible" => $inventario ? $inventario->Stock : 0, //
+                    "Stock_disponible" => $inventario->Stock,
                     "Status" => 400
                 ], 400);
             }
 
+            // Restar el stock del inventario
+            $inventario->Stock -= $cantidadSolicitada;
+            $inventario->save();
 
+            // Registrar el pedido
             $pedido = Pedido::create([
                 "users_id" => $request->users_id,
                 "Cantidad" => $cantidadSolicitada
             ]);
 
-            $detallePedido = DetallePedido::create([
+            // Registrar el detalle del pedido
+            DetallePedido::create([
                 "pedido_id" => $pedido->id,
                 "producto_id" => $producto->id,
                 "FechaPedido" => now(),
                 "TotalPedido" => $cantidadSolicitada * $producto->PrecioUnidad
             ]);
 
-            $inventario->Cantidad -= $cantidadSolicitada;
-            $inventario->Stock = max($inventario->Cantidad, 0); //
-            $inventario->save();
-
             DB::commit();
 
             return response()->json([
-                "Message" => "Pedido Registrado Corecctamente",
+                "Message" => "Pedido Registrado Correctamente",
                 "Pedido" => $pedido,
-                "Detalle_Pedido" => $detallePedido,
                 "Inventario_Actualizado" => $inventario,
                 "status" => 201
             ], 201);
         } catch (\Exception $e) {
-
             DB::rollBack();
+            Log::error("Error en PedidoController@store: " . $e->getMessage());
 
             return response()->json([
-                "Message" => "Error al regsitrar el Pedido",
+                "Message" => "Error al registrar el Pedido",
                 "Error" => $e->getMessage(),
                 "Status" => 500
             ], 500);
@@ -107,9 +112,7 @@ class PedidoController extends Controller
      */
     public function show($id)
     {
-
         $pedido = Pedido::with('detallePedido')->find($id);
-
 
         if (!$pedido) {
             return response()->json([
@@ -117,7 +120,6 @@ class PedidoController extends Controller
                 "status" => 404
             ], 404);
         }
-
 
         return response()->json([
             "pedido" => $pedido,
@@ -130,7 +132,6 @@ class PedidoController extends Controller
      */
     public function update(Request $request, $id)
     {
-
         $pedido = Pedido::find($id);
 
         if (!$pedido) {
@@ -156,7 +157,6 @@ class PedidoController extends Controller
         DB::beginTransaction();
 
         try {
-
             $detallePedido = DetallePedido::where('pedido_id', $pedido->id)->first();
 
             if (!$detallePedido) {
@@ -167,7 +167,7 @@ class PedidoController extends Controller
             }
 
             $producto = Producto::find($request->producto_id);
-            $inventario = Inventario::where('producto_id', $request->producto_id)->first();
+            $inventario = Inventario::where('producto_id', $request->producto_id)->lockForUpdate()->first();
 
             if (!$producto || !$inventario) {
                 return response()->json([
@@ -176,31 +176,37 @@ class PedidoController extends Controller
                 ], 404);
             }
 
+            // Calcular la diferencia entre la cantidad solicitada y la cantidad anterior
             $diferencia = $request->Cantidad - $pedido->Cantidad;
 
-            if ($diferencia > 0 && $inventario->Stock < $diferencia) {
-                return response()->json([
-                    "Message" => "Stock insuficiente, no puede llevarse tantos productos",
-                    "Status" => 400
-                ], 400);
-            }   
-
-            $inventario->Stock -= $diferencia;//
-            $inventario->Cantidad -= $diferencia;
+            if ($diferencia > 0) {
+                // Si la cantidad solicitada es mayor, restar la diferencia del inventario
+                if ($inventario->Stock < $diferencia) {
+                    return response()->json([
+                        "Message" => "Stock insuficiente, no puede llevarse tantos productos",
+                        "Status" => 400
+                    ], 400);
+                }
+                $inventario->Stock -= $diferencia;
+            } else {
+                // Si la cantidad solicitada es menor, sumar la diferencia al inventario
+                $inventario->Stock += abs($diferencia);
+            }
             $inventario->save();
 
+            // Actualizar el pedido
             $pedido->update([
                 "users_id" => $request->users_id,
                 "Cantidad" => $request->Cantidad,
             ]);
 
+            // Actualizar el detalle del pedido
             $detallePedido->update([
                 "producto_id" => $request->producto_id,
                 "FechaPedido" => now(),
                 "TotalPedido" => $request->Cantidad * $producto->PrecioUnidad,
             ]);
 
-            
             DB::commit();
 
             return response()->json([
@@ -210,10 +216,9 @@ class PedidoController extends Controller
                 "inventario" => $inventario,
                 "status" => 200
             ], 200);
-
         } catch (\Exception $e) {
-
             DB::rollBack();
+            Log::error("Error en PedidoController@update: " . $e->getMessage());
 
             return response()->json([
                 "message" => "Error al actualizar el pedido",
@@ -222,7 +227,6 @@ class PedidoController extends Controller
             ], 500);
         }
     }
-
 
     /**
      * Eliminar un pedido y su detalle.
@@ -237,12 +241,24 @@ class PedidoController extends Controller
                 "Status" => 404
             ], 404);
         }
-        
+
         DB::beginTransaction();
 
         try {
+            // Obtener el detalle del pedido y el inventario
+            $detallePedido = $pedido->detallePedido;
+            $inventario = Inventario::where('producto_id', $detallePedido->producto_id)->lockForUpdate()->first();
+
+            if ($inventario) {
+                // Restaurar el stock al inventario
+                $inventario->Stock += $pedido->Cantidad;
+                $inventario->save();
+            }
+
+            // Eliminar el detalle del pedido
             $pedido->detallePedido()->delete();
-            
+
+            // Eliminar el pedido
             $pedido->delete();
 
             DB::commit();
@@ -251,12 +267,38 @@ class PedidoController extends Controller
                 "Message" => "Pedido Eliminado Correctamente",
                 "Status" => 200
             ], 200);
-            
         } catch (\Exception $e) {
             DB::rollBack();
+            Log::error("Error en PedidoController@destroy: " . $e->getMessage());
 
             return response()->json([
                 "message" => "Error al eliminar el pedido",
+                "error" => $e->getMessage(),
+                "status" => 500
+            ], 500);
+        }
+    }
+
+    /**
+     * Generar un reporte de pedidos.
+     */
+    public function reportePedidos()
+    {
+        try {
+            $pedidos = Pedido::with('detallePedido')->get();
+
+            $totalPedido = $pedidos->flatMap->detallePedido->sum('TotalPedido');
+
+            return response()->json([
+                "Pedidos" => $pedidos,
+                "TotalPedido" => $totalPedido,
+                "status" => 200
+            ], 200);
+        } catch (\Throwable $e) {
+            Log::error("Error en PedidoController@reportePedidos: " . $e->getMessage());
+
+            return response()->json([
+                "message" => "Error al generar el informe de pedidos",
                 "error" => $e->getMessage(),
                 "status" => 500
             ], 500);

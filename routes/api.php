@@ -66,6 +66,8 @@ Route::put('/pedido/{id}', [PedidoController::class, 'update']);
 
 Route::delete('/pedido/{id}', [PedidoController::class, 'destroy']);
 
+Route::get('/pedido', [PedidoController::class, 'reportePedidos']);
+
 /*Rutas api rest para crud de la tabla Producto*/
 
 Route::get('/producto', [ProductoController::class, 'index']);
