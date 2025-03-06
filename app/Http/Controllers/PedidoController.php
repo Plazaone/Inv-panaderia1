@@ -27,7 +27,7 @@ class PedidoController extends Controller
     }
 
     /**
-     * Registrar un nuevo pedido y su detalle.
+     * Store a newly created resource in storage.
      */
     public function store(Request $request)
     {
@@ -108,7 +108,7 @@ class PedidoController extends Controller
     }
 
     /**
-     * Mostrar un pedido por ID con su detalle.
+     * Display the specified resource.
      */
     public function show($id)
     {
@@ -229,7 +229,7 @@ class PedidoController extends Controller
     }
 
     /**
-     * Eliminar un pedido y su detalle.
+     * Remove the specified resource from storage.
      */
     public function destroy($id)
     {

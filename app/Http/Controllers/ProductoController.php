@@ -51,7 +51,13 @@ class ProductoController extends Controller
             ], 400);
         }
 
-        $producto = Producto::create($request->only(["users_id", "NombreProducto", "Descripcion", "UnidadMedida", "PrecioUnidad"]));
+        $producto = Producto::create($request->only([
+            "users_id",
+            "NombreProducto",
+            "Descripcion",
+            "UnidadMedida",
+            "PrecioUnidad"
+        ]));
 
         if (!$producto) {
             return response()->json([
@@ -74,7 +80,7 @@ class ProductoController extends Controller
         $producto = Producto::find($id);
         if (!$producto) {
             $data = [
-                "messege" => "Producto no encontrado",
+                "message" => "Producto no encontrado",
                 "status" => 404
             ];
             return response()->json($data, 404);
@@ -103,13 +109,13 @@ class ProductoController extends Controller
         $producto = Producto::find($id);
         if (!$producto) {
             $data = [
-                "messege" => "Producto no encontrado",
+                "message" => "Producto no encontrado",
                 "status" => 404
             ];
             return response()->json($data, 404);
         }
         $validator = Validator::make($request->all(), [
-            "users_id" => "required",
+            "users_id" => "required|integer|exists:users,id",
             "NombreProducto" => "required",
             "Descripcion" => "required",
             "UnidadMedida" => "required",
@@ -148,7 +154,7 @@ class ProductoController extends Controller
         $producto = Producto::find($id);
         if (!$producto) {
             $data = [
-                "messege" => "Producto no encontrado",
+                "message" => "Producto no encontrado",
                 "status" => 404
             ];
             return response()->json($data, 404);
@@ -157,7 +163,7 @@ class ProductoController extends Controller
         $producto->delete();
 
         $data = [
-            "messege" => "Producto eliminado",
+            "message" => "Producto eliminado",
             "status" => 200
         ];
         return response()->json($data, 200);
@@ -169,7 +175,7 @@ class ProductoController extends Controller
 
         if (!$producto) {
             $data = [
-                "messege" => "Producto no Encontrado",
+                "message" => "Producto no Encontrado",
                 "status" => 404
             ];
             return response()->json($data, 404);

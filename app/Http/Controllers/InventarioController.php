@@ -11,7 +11,7 @@ use Illuminate\Support\Facades\Log;
 class InventarioController extends Controller
 {
     /**
-     * Listar el inventario con la suma total de cantidades.
+     *  Display a listing of the resource.
      */
     public function index()
     {
@@ -26,7 +26,7 @@ class InventarioController extends Controller
     }
 
     /**
-     * Agregar un producto al inventario o actualizarlo.
+     * Store a newly created resource in storage.
      */
     public function store(Request $request)
     {
