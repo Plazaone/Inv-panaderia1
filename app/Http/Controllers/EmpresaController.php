@@ -53,7 +53,12 @@ class EmpresaController extends Controller
             ], 400);
         }
 
-        $empresa = Empresa::create($request->only(["Nombre", "Telefono", "email", "direccion"]));
+        $empresa = Empresa::create($request->only([
+            "Nombre",
+            "Telefono",
+            "email",
+            "direccion"
+        ]));
 
         if (!$empresa) {
             return response()->json([

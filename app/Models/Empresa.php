@@ -11,8 +11,20 @@ class Empresa extends Model
     //
     use HasFactory;
 
+
+    /**
+     * The attributes that are mass assignable.
+     *
+     * @var list<string>
+     */
     protected $table = 'empresa';
 
+
+    /**
+     *Los Atributops que son asignables en masa
+     *
+     *@var array<int, string>
+     */
     protected $fillable = [
         'Nombre',
         'Telefono',
@@ -20,6 +32,12 @@ class Empresa extends Model
         'direccion'
     ];
 
+
+    /**
+     * Obtiene la sucursal asociada con la Empresa
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
     public function Sucursals()
     {
         return $this->hasMany(Sucursal::class);

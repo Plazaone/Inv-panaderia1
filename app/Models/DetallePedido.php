@@ -10,8 +10,8 @@ class DetallePedido extends Model
 {
     use HasFactory;
 
-    protected $table = 'detalle_pedidos';
-    
+protected $table = 'detalle_pedidos';
+
     protected $fillable = [
         'pedido_id',
         'producto_id',
@@ -19,6 +19,7 @@ class DetallePedido extends Model
         'TotalPedido'
     ];
 
+    
     public function pedido()
     {
         return $this->belongsTo(Pedido::class);
@@ -28,5 +29,5 @@ class DetallePedido extends Model
     {
         return $this->belongsTo(Producto::class);
     }
-    
+
 }

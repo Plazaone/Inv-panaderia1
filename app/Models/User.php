@@ -18,9 +18,13 @@ class User extends Authenticatable
      *
      * @var list<string>
      */
-
     protected $table = 'users';
 
+    /**
+     *Los Atributops que son asignables en masa
+     *
+     *@var array<int, string>
+     */
     protected $fillable = [
         'Nombre1',
         'Nombre2',
@@ -56,19 +60,45 @@ class User extends Authenticatable
         ];
     }
 
+
+    /**
+     * Obtiene la sucursal asociada con el usuario
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
     public function UsuarioSucursal()
     {
         return $this->hasMany(UsuarioSucursal::class);
     }
 
+
+    /**
+     * Obtiene el pedido asociado con el usuario
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
     public function Pedido()
     {
         return $this->hasMany(Pedido::class);
     }
+
+
+    /**
+     * Obtiene el producto asociado con el usuario
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
     public function Producto()
     {
         return $this->hasMany(Producto::class);
     }
+
+
+    /**
+     * Obtiene el Inventario asociado con el usuario
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
     public function Inventario()
     {
         return $this->hasMany(Inventario::class);

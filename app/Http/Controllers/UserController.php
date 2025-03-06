@@ -5,7 +5,6 @@ namespace App\Http\Controllers;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
-use Nette\Utils\Strings;
 
 class UserController extends Controller
 {
@@ -56,7 +55,15 @@ class UserController extends Controller
             ], 400);
         }
 
-        $user = User::create($request->only(["Nombre1", "Nombre2", "Apellido1", "Apellido2", "email", "Telefono", "Direccion", "Rol","password"]));
+        $user = User::create($request->only([
+            "Nombre1", "Nombre2",
+            "Apellido1", "Apellido2",
+            "email",
+            "Telefono",
+            "Direccion",
+            "Rol",
+            "password"
+        ]));
 
         if (!$user) {
             return response()->json([
@@ -133,20 +140,17 @@ class UserController extends Controller
             ], 400);
         }
 
-        /*$user->update($request->only([
-            "Nombre1", "Nombre2", "Apellido1", "Apellido2", "email", "Telefono", "Direccion", "Rol", "password"
-        ]));*/
-        
-        
-        $user->Nombre1 = $request->Nombre1;
-        $user->Nombre2 = $request->Nombre2;
-        $user->Apellido1 = $request->Apellido1;
-        $user->Apellido2 = $request->Apellido2;
-        $user->email = $request->email;
-        $user->Telefono = $request->Telefono;
-        $user->Direccion = $request->Direccion;
-        $user->Rol = $request->Rol;
-        $user->password = $request->password;
+        $user->update($request->only([
+            "Nombre1",
+            "Nombre2",
+            "Apellido1",
+            "Apellido2",
+            'email' => 'required|email|unique:users,email,' . $id,
+            "Telefono",
+            "Direccion",
+            "Rol",
+            "password"
+        ]));
 
         $user->save();
 
@@ -175,7 +179,7 @@ class UserController extends Controller
         $user->delete();
 
         $data = [
-            "Messege" => "Usuario Eliminada",
+            "Messege" => "Usuario Eliminado",
             "status" => 200
         ];
         return response()->json($data, 200);
@@ -232,9 +236,9 @@ class UserController extends Controller
             $user->Telefono = $request->Telefono;
         }
         if ($request->has('Direccion')) {
-            $user->Direcion = $request->Direccion;
+            $user->Direccion = $request->Direccion;
         }
-        if ($request->has('Rol')){
+        if ($request->has('Rol')) {
             $user->Rol = $request->Rol;
         }
         if ($request->has('password')) {
